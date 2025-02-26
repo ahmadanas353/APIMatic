@@ -2,7 +2,7 @@
 # **Quick Start Guide: APIMatic’s Docs as Code**
 
 Welcome to **APIMatic’s Docs as Code**—a modern, developer-friendly approach to creating, managing, and publishing API documentation. This guide will help you get started quickly and showcase how APIMatic can streamline your documentation workflow, improve collaboration, and ensure consistency across your API ecosystem.  
----
+
 
 ## **Why Choose APIMatic’s Docs as Code?**
 
