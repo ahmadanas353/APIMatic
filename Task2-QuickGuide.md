@@ -53,7 +53,6 @@ mkdir my-api-docs
 cd my-api-docs  
 ```
 
-\-api-docs
 
 2. Add your API definition file (e.g., `openapi.json`) to the `spec/` folder.
 
@@ -117,7 +116,7 @@ python -m http.server 8000
 ```
 
  Open http://localhost:8000 in your browser to see your documentation in action.  
----
+ 
 
 ## **2\. Automate with CI/CD**
 
@@ -146,7 +145,6 @@ jobs:
 ```
 
 Push your changes to GitHub, and your docs will be automatically generated and deployed to GitHub Pages.  
----
 
 ## **3\. Key Features to Explore**
 
