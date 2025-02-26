@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APIMatic’s “Docs as Code” Approach &#8212; APIMatic v1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quick Start Guide: APIMatic’s Docs as Code" href="task1.html" />
+    <link rel="prev" title="APIMatic Documentation Tasks Submission" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="apimatics-docs-as-code-approach">
+<h1>APIMatic’s “Docs as Code” Approach<a class="headerlink" href="#apimatics-docs-as-code-approach" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>APIMatic’s “Docs as Code” methodology integrates API documentation into version-controlled workflows, enabling automation, consistency, and collaboration. This report synthesizes insights from multiple analyses to evaluate its strengths, gaps, and actionable recommendations for developers and technical writers.</p>
+</div>
+<div class="section" id="strengths">
+<h2>2. Strengths<a class="headerlink" href="#strengths" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="structured-workflow-for-scalability">
+<h3>2.1 Structured Workflow for Scalability<a class="headerlink" href="#structured-workflow-for-scalability" title="Permalink to this headline">¶</a></h3>
+<p><em>Spec, Content, and Static Directories:</em> Clear separation of API definitions, Markdown content, and assets simplifies automation and organization.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>📂 docs-as-code/
+├── spec/               # API definitions (OpenAPI, RAML)
+├── content/            # Markdown files + toc.yml
+├── static/             # Images, PDFs
+└── APIMATIC-BUILD.json # Build configuration
+</pre></div>
+</div>
+</div></blockquote>
+<p><em>Build Configuration (APIMATIC-BUILD.json)</em>: Centralizes SDK settings, themes, and portal customization for reproducibility.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="p">{</span>
+<span class="s2">&quot;theme&quot;</span><span class="p">:</span> <span class="s2">&quot;dark&quot;</span><span class="p">,</span>
+<span class="s2">&quot;primaryColor&quot;</span><span class="p">:</span> <span class="s2">&quot;#2E7D32&quot;</span><span class="p">,</span>
+<span class="s2">&quot;codeSamples&quot;</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s2">&quot;languages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="s2">&quot;java&quot;</span><span class="p">,</span> <span class="s2">&quot;csharp&quot;</span><span class="p">]</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="automation-and-ci-cd-integration">
+<h3>2.2 Automation and CI/CD Integration<a class="headerlink" href="#automation-and-ci-cd-integration" title="Permalink to this headline">¶</a></h3>
+<p><em>GitHub Actions Support</em>: Pre-built YAML workflows automate doc generation on code commits, aligning with DevOps practices.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>name: Generate Docs
+on: [push]
+jobs:
+   generate:
+     runs-on: ubuntu-latest
+      steps:
+         - uses: actions/checkout@v4
+         - name: Generate Docs
+         run: |
+            apimatic generate --api-definition ./spec/openapi.json
+         - name: Deploy to Hosting
+         uses: peaceiris/actions-gh-pages@v3
+         with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./output
+</pre></div>
+</div>
+</div></blockquote>
+<p><em>Async/Sync Generation</em>: Async generation is ideal for large APIs to avoid CI/CD timeouts and offers flexibility for large/complex APIs ensures performance optimization.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span> #Long Running Process Handling
+ # Start async generation
+ curl -X POST &quot;https://api.apimatic.io/v1/async-generate&quot; \
+ -H &quot;Authorization: Bearer $APIMATIC_TOKEN&quot; \
+ -o job_id.txt
+
+ # Poll for status
+ JOB_ID=$(cat job_id.txt)
+ while true; do
+  STATUS=$(curl -s &quot;https://api.apimatic.io/v1/jobs/$JOB_ID&quot; | jq -r .status)
+  if [ &quot;$STATUS&quot; = &quot;completed&quot; ]; then break; fi
+ sleep 10
+done
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="markdown-first-authoring">
+<h3>2.3 Markdown-First Authoring<a class="headerlink" href="#markdown-first-authoring" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Reusable Content</strong>: Variables ({{variable}}) and includes streamline modular documentation.</p></li>
+<li><p><strong>Developer-Friendly</strong>: Markdown’s simplicity allows developers to contribute directly in-code.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="versioning-and-backup">
+<h3>2.4 Versioning and Backup<a class="headerlink" href="#versioning-and-backup" title="Permalink to this headline">¶</a></h3>
+<p><em>Tagged Releases</em>: Clear guidance on versioning docs alongside API updates.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span># GitHub Actions: Tag docs with API version
+- name: Tag Docs
+run: |
+ API_VERSION=$(jq &#39;.info.version&#39; openapi.json -r)
+ git tag &quot;docs-$API_VERSION&quot;
+</pre></div>
+</div>
+</div></blockquote>
+<p><em>Backup/Restore Functionality:</em> Minimizes data loss risks during migrations or rollbacks.</p>
+</div>
+<div class="section" id="customization">
+<h3>2.5 Customization<a class="headerlink" href="#customization" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Theme Overrides</strong>: CSS/JS adjustments enable brand consistency.</p></li>
+<li><p><strong>Multi-Language Code Samples</strong>: Customizable SDK snippets align with developer needs.</p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="areas-for-improvement">
+<h2>3. Areas for Improvement<a class="headerlink" href="#areas-for-improvement" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="limited-ci-cd-coverage">
+<h3>3.1 Limited CI/CD Coverage<a class="headerlink" href="#limited-ci-cd-coverage" title="Permalink to this headline">¶</a></h3>
+<p><em>GitHub-Centric Automation</em>: Lack of examples for GitLab, Jenkins, or Azure DevOps forces teams to create workarounds.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```
+Gitlab CI/CD workflow
+```
+stages:
+   - build
+generate-docs:
+ stage: build
+ script:
+ - apimatic generate --api-definition ./spec/openapi.json
+ artifacts:
+ paths:
+   - ./docs
+</pre></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span> ```
+ Jenkins Pipeline
+ ```
+ pipeline {
+  agent any
+  stages {
+    stage(&#39;Generate Docs&#39;) {
+       steps {
+          sh &#39;apimatic generate --api-definition ./spec/openapi.json&#39;
+     }
+   }
+ }
+}
+</pre></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```
+Azure DevOps Pipeline
+```
+jobs:
+   - job: Generate_Docs
+   steps:
+      - script: |
+       apimatic generate --api-definition ./spec/openapi.json
+    displayName: &#39;Generate API Portal&#39;
+   - task: PublishBuildArtifacts@1
+   inputs:
+      PathtoPublish: &#39;docs&#39;
+</pre></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="inadequate-debugging-and-error-handling">
+<h3>3.2 Inadequate Debugging and Error Handling<a class="headerlink" href="#inadequate-debugging-and-error-handling" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Vague Troubleshooting</strong>: No guidance for common issues (e.g., validation failures, CI/CD timeouts).</p></li>
+<li><p><strong>Workaround</strong>: Pre-validation scripts (Python/CLI) to catch errors early.</p></li>
+</ul>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="c1">#Pre-validation script with python</span>
+ <span class="kn">import</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">yaml</span>
+ <span class="k">def</span> <span class="nf">validate_spec</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+   <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
+             <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+             <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Valid API specification.&quot;</span><span class="p">)</span>
+ <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Validation failed: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">validate_spec</span><span class="p">(</span><span class="s1">&#39;./spec/openapi.yaml&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="theming-and-collaboration-gaps">
+<h3>3.4 Theming and Collaboration Gaps<a class="headerlink" href="#theming-and-collaboration-gaps" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul>
+<li><p><strong>Limited CSS/JS Control</strong>: Advanced branding requires manual overrides.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="o">//</span> <span class="n">APIMATIC</span><span class="o">-</span><span class="n">BUILD</span><span class="o">.</span><span class="n">json</span>
+<span class="p">{</span>
+   <span class="s2">&quot;theme&quot;</span><span class="p">:</span> <span class="p">{</span>
+   <span class="s2">&quot;customCSS&quot;</span><span class="p">:</span> <span class="s2">&quot;styles/overrides.css&quot;</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>No PR Review Workflows</strong>: Missing collaboration tools for cross-team doc reviews.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="navigation-and-content-reuse">
+<h3>3.5 Navigation and Content Reuse<a class="headerlink" href="#navigation-and-content-reuse" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Fragmented Documentation</strong>: No breadcrumbs or cross-linking disrupts user flow.</p></li>
+<li><p><strong>No Shared Partials</strong>: Inability to reuse tables/error descriptions across endpoints.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="recommendations">
+<h2>4. Recommendations<a class="headerlink" href="#recommendations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="expand-ci-cd-documentation">
+<h3>4.1 Expand CI/CD Documentation<a class="headerlink" href="#expand-ci-cd-documentation" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Add Examples</strong>: Provide templates for GitLab CI, Jenkins, and Azure DevOps.</p></li>
+</ul>
+<dl>
+<dt>Error Handling in Pipelines:</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```
+GitLab CI Example
+```
+generate-docs:
+   image: python:3.9
+   script:
+      - pip install apimatic-core
+      - apimatic generate --api-definition ./openapi.json
+   artifacts:
+      paths:
+         - generated-docs/
+</pre></div>
+</div>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Bitbucket Pipelines</em>: Modify bitbucket-pipelines.yml to trigger APIMatic API calls.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pipelines</span><span class="p">:</span>
+  <span class="n">default</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">step</span><span class="p">:</span>
+        <span class="n">script</span><span class="p">:</span>
+          <span class="o">-</span> <span class="n">apimatic</span> <span class="n">generate</span> <span class="o">--</span><span class="n">api</span><span class="o">-</span><span class="n">definition</span> <span class="o">./</span><span class="n">spec</span><span class="o">/</span><span class="n">openapi</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="enhance-code-sample-governance">
+<h3>4.2 Enhance Code Sample Governance<a class="headerlink" href="#enhance-code-sample-governance" title="Permalink to this headline">¶</a></h3>
+<p>Add a section on syncing code snippets with SDKs using APIMatic’s CLI.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apimatic</span> <span class="n">sync</span><span class="o">-</span><span class="n">samples</span> <span class="o">--</span><span class="n">sdk</span><span class="o">-</span><span class="n">version</span> <span class="mf">2.1.0</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="enhance-debugging-and-validation">
+<h3>4.3 Enhance Debugging and Validation<a class="headerlink" href="#enhance-debugging-and-validation" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Dedicated Troubleshooting Guide</strong>: Include common errors (e.g., authentication failures, timeout fixes).</p></li>
+<li><p><strong>Pre-Commit Hooks</strong>: Integrate tools like swagger-cli or markdownlint for validation.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="develop-migration-resources">
+<h3>4.4 Develop Migration Resources<a class="headerlink" href="#develop-migration-resources" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><em>Migration Toolkit</em>: Create a CLI utility to convert Swagger/OpenAPI specs and legacy docs.</p></li>
+</ul>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convert Swagger to APIMatic format</span>
+<span class="n">apimatic</span> <span class="n">migrate</span> <span class="o">--</span><span class="n">source</span> <span class="n">swagger</span><span class="o">.</span><span class="n">json</span> <span class="o">--</span><span class="nb">format</span> <span class="n">apimatic</span>
+
+<span class="c1"># Import legacy Markdown</span>
+<span class="n">apimatic</span> <span class="n">import</span><span class="o">-</span><span class="n">markdown</span> <span class="o">--</span><span class="nb">dir</span> <span class="o">./</span><span class="n">legacy</span><span class="o">-</span><span class="n">docs</span> <span class="o">--</span><span class="n">output</span> <span class="o">./</span><span class="n">content</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ul class="simple">
+<li><p><em>Migration Toolkit for bulk Conversion</em>: Create a migration bash script tool for bulk file conversions.</p></li>
+</ul>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#!/bin/bash
+for file in ./legacy-specs/*.json; do
+   apimatic migrate --source $file --format apimatic
+done
+</pre></div>
+</div>
+</div></blockquote>
+<ul class="simple">
+<li><p><em>Step-by-Step Guides</em>: Document processes for migrating from Stoplight/ReadMe, including asset porting.</p></li>
+</ul>
+</div>
+<div class="section" id="improve-customization-and-collaboration">
+<h3>4.5 Improve Customization and Collaboration<a class="headerlink" href="#improve-customization-and-collaboration" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul>
+<li><p>Advanced Theming:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Allow CSS variables in APIMATIC-BUILD.json (e.g., –primary-color: #ff6600).</p></li>
+<li><p>Add a WYSIWYG theme editor for non-developers.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>PR Review Templates: Standardize doc review workflows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## Documentation Review Checklist</span>
+<span class="o">-</span> <span class="p">[</span> <span class="p">]</span> <span class="n">Code</span> <span class="n">samples</span> <span class="n">match</span> <span class="n">SDK</span> <span class="n">version</span> <span class="mf">2.1</span><span class="o">.</span>
+<span class="o">-</span> <span class="p">[</span> <span class="p">]</span> <span class="n">API</span> <span class="n">endpoints</span> <span class="n">are</span> <span class="n">synchronized</span> <span class="k">with</span> <span class="n">spec</span><span class="o">.</span>
+<span class="o">-</span> <span class="p">[</span> <span class="p">]</span> <span class="n">Custom</span> <span class="n">CSS</span><span class="o">/</span><span class="n">JS</span> <span class="n">passes</span> <span class="n">accessibility</span> <span class="n">checks</span><span class="o">.</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="optimize-navigation-and-content-reuse">
+<h3>4.6 Optimize Navigation and Content Reuse<a class="headerlink" href="#optimize-navigation-and-content-reuse" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul>
+<li><p><em>Breadcrumbs and Sidebars</em>: Implement persistent navigation across documentation pages.</p></li>
+<li><p><em>Shared Partials</em>: Enable reusable Markdown snippets:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{{</span><span class="o">&gt;</span> <span class="n">_includes</span><span class="o">/</span><span class="n">authentication</span><span class="o">.</span><span class="n">md</span><span class="p">}}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="local-preview-with-docker">
+<h3>4.7 Local Preview with Docker<a class="headerlink" href="#local-preview-with-docker" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul>
+<li><p><em>Preview Workflow</em>: Document local testing and preview with Docker:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker run -it --rm -v $(pwd):/docs -p 8080:80 apimatic/preview-server
+# Access at http://localhost:8080
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h2>5. Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+<p>APIMatic’s “Docs as Code” framework is a powerful tool for automating API documentation but requires enhancements in CI/CD support, debugging, migration, and collaboration. By adopting these recommendations, APIMatic can:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><strong>Boost Developer Efficiency</strong> with broader CI/CD integration and governance for code samples.</p></li>
+<li><p><strong>Empower Technical Writers</strong> through content reuse tools and localized previews.</p></li>
+<li><p><strong>Streamline Cross-Team Collaboration</strong> with PR review workflows and migration utilities.</p></li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="glossary">
+<h2>Glossary<a class="headerlink" href="#glossary" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>API Definitions
+Files (e.g., OpenAPI, RAML, API Blueprint) that describe an API’s endpoints, parameters, and behaviors.</p></li>
+<li><p>APIMatic CLI
+Command-line interface tool to generate, validate, and manage API documentation and SDKs.</p></li>
+<li><p>APIMATIC-BUILD.json
+Configuration file defining themes, SDK settings, and customization options for API portal generation.</p></li>
+<li><p>Async API
+A method to generate API documentation asynchronously, ideal for large specifications. Returns a Job ID to monitor progress.</p></li>
+<li><p>Automated Portal Generation
+The process of programmatically creating API documentation portals using CI/CD pipelines or APIMatic’s API.</p></li>
+<li><p>Backup Hosted Portal Feature
+APIMatic functionality to export and restore API portal configurations for disaster recovery or version control.</p></li>
+<li><p>Breadcrumbs
+Navigation elements showing the user’s location within the documentation hierarchy (e.g., Home &gt; API Reference &gt; Authentication).</p></li>
+<li><p>CI/CD (Continuous Integration/Continuous Deployment)
+Automated workflows (e.g., GitHub Actions, Jenkins) to build, test, and deploy code or documentation changes.</p></li>
+<li><p>Content Directory
+Folder containing Markdown files and a toc.yml file to structure documentation content.</p></li>
+<li><p>Docker
+Platform for containerizing applications, used to locally preview documentation themes.</p></li>
+<li><p>Docs as Code
+Methodology treating documentation like software code, using version control, automation, and developer tools.</p></li>
+<li><p>Hosted Portal
+The web-based API documentation site generated and hosted by APIMatic.</p></li>
+<li><p>Job ID
+Unique identifier returned by APIMatic’s Async API to track the status of a documentation generation task.</p></li>
+<li><p>Linting Tools
+Utilities (e.g., markdownlint, swagger-cli) to enforce formatting rules and validate API specifications.</p></li>
+<li><p>Markdown
+Lightweight markup language for authoring documentation with simple syntax (e.g., # Headers, <strong>bold</strong>).</p></li>
+<li><p>Pre-commit Hooks
+Scripts that automatically validate files (e.g., JSON, Markdown) before code commits.</p></li>
+<li><p>Shared Partials
+Reusable Markdown snippets (e.g., {{&gt; _includes/errors.md}}) to avoid content duplication.</p></li>
+<li><p>Spec Directory
+Folder storing API definition files (e.g., openapi.json, api.raml).</p></li>
+<li><p>Static Directory
+Folder for static assets (images, PDFs) referenced in documentation.</p></li>
+<li><p>Structured Logging
+Logs formatted for easy debugging (e.g., JSON logs with timestamps and error codes).</p></li>
+<li><p>Sync API
+Real-time API portal generation method with a 4-minute timeout, suitable for small specifications.</p></li>
+<li><p>toc.yml
+YAML file defining the table of contents structure for documentation navigation.</p></li>
+<li><p>Transformer
+APIMatic tool to convert API specifications between formats (e.g., OpenAPI to RAML).</p></li>
+<li><p>Version-Controlled Repositories
+Git-based systems (e.g., GitHub, GitLab) to track changes to documentation and code.</p></li>
+<li><p>WYSIWYG Editor
+“What You See Is What You Get” interface for non-developers to customize themes visually.</p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">APIMatic</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">APIMatic’s “Docs as Code” Approach</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#strengths">2. Strengths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#areas-for-improvement">3. Areas for Improvement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommendations">4. Recommendations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conclusion">5. Conclusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glossary">Glossary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="task1.html">Quick Start Guide: APIMatic’s Docs as Code</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">APIMatic Documentation Tasks Submission</a></li>
+      <li>Next: <a href="task1.html" title="next chapter">Quick Start Guide: APIMatic’s Docs as Code</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2025, Ahmad Anas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/task2.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

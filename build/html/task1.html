@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APIMatic’s Docs as Code: A Quick Start Guide &#8212; APIMatic v1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="APIMatic’s “Docs as Code” Approach" href="task2.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="apimatics-docs-as-code-a-quick-start-guide">
+<h1>APIMatic’s Docs as Code: A Quick Start Guide<a class="headerlink" href="#apimatics-docs-as-code-a-quick-start-guide" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to APIMatic’s Docs as Code—a modern, developer-friendly approach to creating, managing, and publishing API documentation. This guide will help you get started quickly and showcase how APIMatic can streamline your documentation workflow, improve collaboration, and ensure consistency across your API ecosystem.</p>
+<div class="section" id="why-choose-apimatics-docs-as-code">
+<h2>Why Choose APIMatic’s Docs as Code?<a class="headerlink" href="#why-choose-apimatics-docs-as-code" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>APIMatic’s Docs as Code empowers teams to:</dt><dd><ul class="simple">
+<li><p><strong>Automate Documentation</strong>: Generate docs automatically from API definitions (OpenAPI, RAML, etc.).</p></li>
+<li><p><strong>Version Control</strong>: Manage documentation alongside your code using Git.</p></li>
+<li><p><strong>Collaborate Effectively</strong>: Enable developers and technical writers to work together seamlessly.</p></li>
+<li><p><strong>Customize and Brand</strong>: Tailor your documentation to match your brand’s look and feel.</p></li>
+<li><p><strong>Integrate with CI/CD</strong>: Automate doc generation and deployment using your favorite tools (GitHub Actions, GitLab CI, Jenkins, etc.).</p></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="get-started-in-4-simple-steps">
+<h2>Get Started in 4 Simple Steps<a class="headerlink" href="#get-started-in-4-simple-steps" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="step-1-install-the-apimatic-cli">
+<h3>Step 1: Install the APIMatic CLI<a class="headerlink" href="#step-1-install-the-apimatic-cli" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Install the APIMatic CLI tool to generate and manage your documentation:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span> <span class="o">-</span><span class="n">g</span> <span class="nd">@apimatic</span><span class="o">/</span><span class="n">cli</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Verify the installation</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apimatic</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="step-2-set-up-your-project-structure">
+<h3>Step 2: Set Up Your Project Structure<a class="headerlink" href="#step-2-set-up-your-project-structure" title="Permalink to this headline">¶</a></h3>
+<p>APIMatic’s Docs as Code uses a clean, organized directory structure:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>📂 my-api-docs/
+├── spec/               # API definitions (OpenAPI, RAML)
+├── content/            # Markdown files + toc.yml
+├── static/             # Images, PDFs
+└── APIMATIC-BUILD.json # Build configuration
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Create your project directory:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">my</span><span class="o">-</span><span class="n">api</span><span class="o">-</span><span class="n">docs</span>
+<span class="n">cd</span> <span class="n">my</span><span class="o">-</span><span class="n">api</span><span class="o">-</span><span class="n">docs</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Add your API definition file (e.g., openapi.json) to the spec/ folder.</p></li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="step-3-configure-your-documentation">
+<h3>Step 3: Configure Your Documentation<a class="headerlink" href="#step-3-configure-your-documentation" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Create an APIMATIC-BUILD.json file to define your documentation settings:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+ <span class="s2">&quot;theme&quot;</span><span class="p">:</span> <span class="s2">&quot;dark&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;primaryColor&quot;</span><span class="p">:</span> <span class="s2">&quot;#2E7D32&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;codeSamples&quot;</span><span class="p">:</span> <span class="p">{</span>
+ <span class="s2">&quot;languages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="s2">&quot;java&quot;</span><span class="p">,</span> <span class="s2">&quot;csharp&quot;</span><span class="p">]</span>
+  <span class="p">}</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>theme</strong>: Choose a theme (e.g., dark, light).</p></li>
+<li><p><strong>primaryColor</strong>: Set your brand’s primary color.</p></li>
+<li><p><strong>codeSamples</strong>: Specify languages for code snippets.</p></li>
+</ul>
+<p>Add Markdown content to the content/ folder, e.g., index.md:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Welcome to My API Documentation</span>
+
+<span class="c1">## Getting Started</span>
+<span class="mf">1.</span> <span class="n">Install</span> <span class="n">the</span> <span class="n">required</span> <span class="n">tools</span><span class="o">.</span>
+<span class="mf">2.</span> <span class="n">Write</span> <span class="n">your</span> <span class="n">API</span> <span class="n">definition</span><span class="o">.</span>
+<span class="mf">3.</span> <span class="n">Generate</span> <span class="ow">and</span> <span class="n">publish</span> <span class="n">your</span> <span class="n">docs</span><span class="o">.</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Define navigation with a toc.yml file:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">title</span><span class="p">:</span> <span class="n">Home</span>
+  <span class="n">path</span><span class="p">:</span> <span class="n">index</span><span class="o">.</span><span class="n">md</span>
+<span class="o">-</span> <span class="n">title</span><span class="p">:</span> <span class="n">API</span> <span class="n">Reference</span>
+  <span class="n">path</span><span class="p">:</span> <span class="n">api</span><span class="o">-</span><span class="n">reference</span><span class="o">.</span><span class="n">md</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="step-4-generate-and-preview-your-docs">
+<h3>Step 4: Generate and Preview Your Docs<a class="headerlink" href="#step-4-generate-and-preview-your-docs" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Generate your documentation locally:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apimatic</span> <span class="n">generate</span> <span class="o">--</span><span class="n">api</span><span class="o">-</span><span class="n">definition</span> <span class="o">./</span><span class="n">spec</span><span class="o">/</span><span class="n">openapi</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>This creates a generated-docs/ folder with your static site.</p>
+<ol class="arabic simple" start="2">
+<li><p>Preview your docs locally:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">generated</span><span class="o">-</span><span class="n">docs</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">http</span><span class="o">.</span><span class="n">server</span> <span class="mi">8000</span>
+</pre></div>
+</div>
+<p>Open <a class="reference external" href="http://localhost:8000">http://localhost:8000</a> in your browser to see your documentation in action.</p>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="automate-with-ci-cd">
+<h2>Automate with CI/CD<a class="headerlink" href="#automate-with-ci-cd" title="Permalink to this headline">¶</a></h2>
+<p>APIMatic integrates seamlessly with your CI/CD pipeline to automate documentation generation and deployment.</p>
+<div class="section" id="example-github-actions-workflow">
+<h3>Example: GitHub Actions Workflow<a class="headerlink" href="#example-github-actions-workflow" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Create a .github/workflows/generate-docs.yml file:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> name: Generate Docs
+on: [push]
+jobs:
+generate:
+ runs-on: ubuntu-latest
+ steps:
+   - uses: actions/checkout@v4
+   - name: Generate Docs
+     run: |
+       apimatic generate --api-definition ./spec/openapi.json
+   - name: Deploy to GitHub Pages
+     uses: peaceiris/actions-gh-pages@v3
+     with:
+       github_token: ${{ secrets.GITHUB_TOKEN }}
+       publish_dir: ./generated-docs
+</pre></div>
+</div>
+</div></blockquote>
+<p>Push your changes to GitHub, and your docs will be automatically generated and deployed to GitHub Pages.</p>
+</div>
+</div>
+<div class="section" id="key-features-to-explore">
+<h2>Key Features to Explore<a class="headerlink" href="#key-features-to-explore" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="async-api-generation">
+<h3>Async API Generation<a class="headerlink" href="#async-api-generation" title="Permalink to this headline">¶</a></h3>
+<p>For large APIs, use async generation to avoid CI/CD timeouts:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span> curl -X POST &quot;https://api.apimatic.io/v1/async-generate&quot; \
+-H &quot;Authorization: Bearer $APIMATIC_TOKEN&quot; \
+-o job_id.txt
+
+ # Poll for status
+ JOB_ID=$(cat job_id.txt)
+ while true; do
+  STATUS=$(curl -s &quot;https://api.apimatic.io/v1/jobs/$JOB_ID&quot; | jq -r .status)
+  if [ &quot;$STATUS&quot; = &quot;completed&quot; ]; then break; fi
+  sleep 10
+ done
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="custom-branding">
+<h3>Custom Branding<a class="headerlink" href="#custom-branding" title="Permalink to this headline">¶</a></h3>
+<p>Add custom CSS/JS to match your brand:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="p">{</span>
+<span class="s2">&quot;theme&quot;</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s2">&quot;customCSS&quot;</span><span class="p">:</span> <span class="s2">&quot;styles/overrides.css&quot;</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="versioning">
+<h3>Versioning<a class="headerlink" href="#versioning" title="Permalink to this headline">¶</a></h3>
+<p>Tag your docs with your API version:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>API_VERSION=$(jq &#39;.info.version&#39; spec/openapi.json -r)
+git tag &quot;docs-$API_VERSION&quot;
+git push --tags
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="why-apimatic">
+<h2>Why APIMatic?<a class="headerlink" href="#why-apimatic" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Scalable Workflows</strong>: Clear separation of API definitions, content, and assets.</p></li>
+<li><p><strong>Developer-Friendly</strong>: Markdown-first authoring and reusable content.</p></li>
+<li><p><strong>Flexible Integration</strong>: Works with GitHub, GitLab, Jenkins, Azure DevOps, and more.</p></li>
+<li><p><strong>Customizable</strong>: Themes, code samples, and branding tailored to your needs.</p></li>
+<li><p><strong>Reliable</strong>: Versioning, backups, and async generation for large APIs.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="way-forward">
+<h2>Way Forward<a class="headerlink" href="#way-forward" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul>
+<li><p>Explore <strong>shared partials</strong> for reusable content.</p></li>
+<li><p>Use <strong>breadcrumbs</strong> and <strong>cross-linking</strong> to improve navigation.</p></li>
+<li><p>Migrate legacy docs using APIMatic’s migration tools:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apimatic</span> <span class="n">migrate</span> <span class="o">--</span><span class="n">source</span> <span class="n">swagger</span><span class="o">.</span><span class="n">json</span> <span class="o">--</span><span class="nb">format</span> <span class="n">apimatic</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="section" id="get-started-today">
+<h3>Get Started Today<a class="headerlink" href="#get-started-today" title="Permalink to this headline">¶</a></h3>
+<p>Ready to transform your API documentation workflow? Visit <a class="reference external" href="https://docs.apimatic.io/docs-as-code/documentation-as-code-overview/">APIMatic’s Docs as Code Documentation</a> to learn more or reach out to our team for a <a class="reference external" href="https://www.apimatic.io/request-demo">personalized demo</a>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">APIMatic</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="task2.html">APIMatic’s “Docs as Code” Approach</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">APIMatic’s Docs as Code: A Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#why-choose-apimatics-docs-as-code">Why Choose APIMatic’s Docs as Code?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-started-in-4-simple-steps">Get Started in 4 Simple Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#automate-with-ci-cd">Automate with CI/CD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-features-to-explore">Key Features to Explore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#why-apimatic">Why APIMatic?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#way-forward">Way Forward</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="task2.html" title="previous chapter">APIMatic’s “Docs as Code” Approach</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2025, Ahmad Anas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/task1.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
